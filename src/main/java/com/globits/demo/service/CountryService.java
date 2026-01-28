@@ -1,10 +1,10 @@
-package com.globits.demo.dao;
+package com.globits.demo.service;
 
 import com.globits.demo.model.Country;
 
 import java.util.List;
 
-public interface CountryDAO {
+public interface CountryService {
     void create(Country country);
 
     List<Country> getAll();
