@@ -1,14 +1,10 @@
 package com.globits.demo;
 
-import com.globits.demo.config.ModelConfig;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import com.globits.demo.model.Television;
 
 @SpringBootApplication
 public class DemoApplication {
