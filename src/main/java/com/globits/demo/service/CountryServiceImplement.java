@@ -18,14 +18,14 @@ public class CountryServiceImplement implements CountryService {
 
     @Transactional
     @Override
-    public void create(Country country) {
-        countryDAO.create(country);
+    public Country create(Country country) {
+        return countryDAO.create(country);
     }
 
     @Transactional
     @Override
     public List<Country> getAll() {
-        return null;
+        return countryDAO.getAll();
     }
 
     @Transactional
@@ -36,12 +36,13 @@ public class CountryServiceImplement implements CountryService {
 
     @Transactional
     @Override
-    public void save(Country country) {
-
+    public Country save(Country country) {
+        return countryDAO.save(country);
     }
 
     @Transactional
     @Override
     public void delete(int id) {
+        countryDAO.delete(id);
     }
 }
