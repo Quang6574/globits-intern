@@ -6,35 +6,29 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 
-/*
-* Đánh dấu model này là entity cho Spring Boot scan
-* Và liên kết với bảng tbl_country trong mysql database
-* */
+
 @Entity
 @Table(name = "tbl_country")
 public class Country {
     @Id
-    @Column(name = "id")//liên kết giá trị bên dưới với cột tương ứng trong tbl_country
-    /*
-    id country primary key, có thể tự đặt theo thứ tự tăng dần
-    */
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @Column
     private Integer id;
 
-    @Column(name = "name")//liên kết giá trị bên dưới với cột tương ứng trong tbl_country
+    @Column
     private String name;
-    @Column(name = "code")
+    @Column
     private String code;
-    @Column(name = "description")
+    @Column
     private String description;
 
-    //getter và setter
     public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
@@ -54,9 +48,9 @@ public class Country {
         this.description = description;
     }
 
-    //chuyển đổi toàn bộ thông tin thành String. Có thể dùng trong tương lai
-    public String toString() { return "Country [id=" + id + ", name=" + name + ", " +
-            "code=" + code + ", description=" + description + "]";
+
+    public String toString() {
+        return "Country [id=" + id + ", name=" + name + ", code=" + code + ", description=" + description + "]";
     }
 
 }

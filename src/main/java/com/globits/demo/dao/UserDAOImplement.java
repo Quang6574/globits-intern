@@ -1,9 +1,11 @@
 package com.globits.demo.dao;
 
 import com.globits.demo.model.User;
-import jakarta.persistence.EntityManager;
+import com.globits.demo.model.Person;
 import org.hibernate.Session;
+import jakarta.persistence.EntityManager;
 import org.hibernate.query.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

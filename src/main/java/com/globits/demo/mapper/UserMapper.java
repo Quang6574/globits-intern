@@ -22,6 +22,6 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "isActive", target = "isActive") // explicit
-    //@Mapping(target = "person", ignore = true)
+        //@Mapping(target = "person", ignore = true)
     User toCreateDTO(UserCreateDTO dto);
 }
