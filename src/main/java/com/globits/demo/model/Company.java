@@ -1,13 +1,11 @@
 package com.globits.demo.model;
 
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "tbl_company")
@@ -20,6 +18,14 @@ public class Company {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Person> person;
+
+    @ManyToMany
+    @JoinTable(
+            name = "tbl_company_project",
+            joinColumns = @JoinColumn(name = "company_code", referencedColumnName = "code"),
+            inverseJoinColumns = @JoinColumn(name = "project_code", referencedColumnName = "code")
+    )
+    private Set<Project> projects = new HashSet<>();
 
     public String getCode() {
         return code;
