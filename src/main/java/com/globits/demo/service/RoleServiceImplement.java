@@ -37,7 +37,6 @@ public class RoleServiceImplement implements RoleService {
         // map to view DTOs (with persons list)
         return roleMapper.toCreateDtoList(entities);
     }
-
     @Transactional(readOnly = true)
     @Override
     public RoleViewDTO get(String role) {

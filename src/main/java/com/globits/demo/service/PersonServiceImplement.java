@@ -45,7 +45,6 @@ public class PersonServiceImplement implements PersonService {
         List<Person> list = personDAO.getAll();
         return personMapper.toViewDtoList(list);
     }
-
     @Override
     @Transactional(readOnly = true)
     public PersonViewDTO get(int id) {
@@ -146,7 +145,6 @@ public class PersonServiceImplement implements PersonService {
         Person saved = personDAO.save(person);
         return personMapper.toViewDto(saved);
     }
-
     // delete role
     @Override
     @Transactional
@@ -169,4 +167,39 @@ public class PersonServiceImplement implements PersonService {
     public void delete(int id) {
         personDAO.delete(id);
     }
+
+    @Override
+    @Transactional
+    public PersonRoleDTO addAvatar(int personId, PersonRoleDTO avatarDTO) {
+
+        Person person = personDAO.get(personId);
+        if (person == null) return null;
+
+        if(person.getAvatar() != null) return null;
+
+        String path = avatarDTO.getRole();
+        if (path == null || path.isBlank()) return null;
+
+        boolean isImage = path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".png");
+        if (!isImage) return null;
+
+        person.setAvatar(path);
+        personDAO.save(person);
+
+        return avatarDTO;
+    }
+
+    @Override
+    @Transactional
+    public PersonViewDTO removeAvatar(int personId) {
+        Person person = personDAO.get(personId);
+        if (person == null) return null;
+
+        person.setAvatar(null);
+        Person saved = personDAO.save(person);
+        return personMapper.toViewDto(saved);
+
+
+    }
+
 }

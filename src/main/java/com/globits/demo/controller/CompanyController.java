@@ -2,6 +2,7 @@ package com.globits.demo.controller;
 
 import java.util.List;
 
+import com.globits.demo.dto.DepartmentCreateDTO;
 import com.globits.demo.service.CompanyService;
 
 import com.globits.demo.dto.CompanyDTO;
@@ -48,7 +49,7 @@ public class CompanyController {
     //UPDATE
     @PutMapping("/{code}")
     public ResponseEntity<CompanyDTO> update(@PathVariable String code,
-                                          @RequestBody CompanyDTO companyDTO) {
+                                             @RequestBody CompanyDTO companyDTO) {
         CompanyDTO updated = companyService.save(code, companyDTO);
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);
@@ -62,4 +63,15 @@ public class CompanyController {
         companyService.delete(code);
         return ResponseEntity.noContent().build();
     }
+
+    //GET DEPARTMENTS BY COMPANY CODE
+    @GetMapping("/{code}/departments")
+    public ResponseEntity<List<DepartmentCreateDTO>> getAllDepartments(@PathVariable String code) {
+        //check if the company with the given code exists
+        if (companyService.get(code) == null) return ResponseEntity.notFound().build();
+
+        List<DepartmentCreateDTO> departments = companyService.getAllDepartment(code);
+        return ResponseEntity.ok(departments);
+    }
+
 }

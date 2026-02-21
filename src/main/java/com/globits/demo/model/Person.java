@@ -1,10 +1,27 @@
 package com.globits.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
+
+
+
 
 import java.sql.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -21,20 +38,27 @@ public class Person {
     @JsonProperty("phone_num")
     @Column(name = "phone_num")
     private String phoneNum;
-
     @Column
     private String gender;
     @Column
     private Date dob;
     @Column
     private String address;
+    @Column
+    private String avatar;
 
+    //user relation one to one
+    //person owns the user
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = true)
     private User user;
+
+    //many to one relation with company
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_code", referencedColumnName = "code", nullable = true)
     private Company company;
+
+    //many to many relation with role
     @ManyToMany
     @JoinTable(
             name = "tbl_person_role",
@@ -42,6 +66,19 @@ public class Person {
             inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "role")
     )
     private Set<Role> roles = new HashSet<>();
+
+    //many to many relation with project
+    @ManyToMany
+    @JoinTable(
+            name = "tbl_person_project",
+            joinColumns = @JoinColumn(name = "person_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id")
+    )
+    private Set<Project> projects = new HashSet<>();
+
+    //
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Task> tasks;
 
     public Set<Role> getRoles() {
         return roles;
@@ -127,7 +164,21 @@ public class Person {
         this.company = company;
     }
 
+    public Set<Project> getProjects() {
+        return projects;
+    }
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+
     public String toString() { return "Person [id=" + id + ", fullName=" + fullName + ", gender=" + gender + ", " +
             "birthdate=" + dob + ", address=" + address + "]";}
+
+    public String getAvatar() {
+        return avatar;
+    }
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
 }

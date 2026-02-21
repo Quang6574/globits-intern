@@ -8,7 +8,7 @@ public interface CountryDAO {
 
     Country create(Country country);
 
-    List<Country> getAll();
+    List<Country> getAll(int page, int pageSize);
     Country get(int id);
 
     Country save(Country country);

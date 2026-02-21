@@ -15,8 +15,11 @@ public interface PersonService {
     PersonViewDTO removeUser(int personId, PersonCreateDTO dto);
 
     PersonViewDTO editCompany(int personId, PersonEditCompanyDTO dto);
-    public PersonViewDTO addRole(int personId, PersonRoleDTO dto) ;
-    public PersonViewDTO removeRole(int personId, PersonRoleDTO dto);
+    PersonViewDTO addRole(int personId, PersonRoleDTO dto) ;
+    PersonViewDTO removeRole(int personId, PersonRoleDTO dto);
+
+    PersonRoleDTO addAvatar(int personId, PersonRoleDTO avatarDTO);
+    PersonViewDTO removeAvatar(int personId);
 
 
     void delete(int id);

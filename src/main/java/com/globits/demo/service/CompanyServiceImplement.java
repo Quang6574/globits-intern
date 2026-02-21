@@ -1,9 +1,16 @@
 package com.globits.demo.service;
 
+import com.globits.demo.mapper.CompanyMapper;
+import com.globits.demo.mapper.DepartmentMapper;
+import com.globits.demo.model.Company;
+
 import com.globits.demo.dao.CompanyDAO;
 import com.globits.demo.dto.CompanyDTO;
-import com.globits.demo.mapper.CompanyMapper;
-import com.globits.demo.model.Company;
+
+import com.globits.demo.dao.DepartmentDAO;
+import com.globits.demo.dto.DepartmentCreateDTO;
+
+import com.globits.demo.model.Department;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +22,13 @@ public class CompanyServiceImplement implements CompanyService {
 
     @Autowired
     private CompanyDAO companyDAO;
-
     @Autowired
     private CompanyMapper companyMapper;
+
+    @Autowired
+    private DepartmentDAO departmentDAO;
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
     @Transactional
     @Override
@@ -36,7 +47,6 @@ public class CompanyServiceImplement implements CompanyService {
         List<Company> entities = companyDAO.getAll();
         return companyMapper.toDtoList(entities);
     }
-
     @Transactional
     @Override
     public CompanyDTO get(String code) {
@@ -69,5 +79,15 @@ public class CompanyServiceImplement implements CompanyService {
     @Override
     public void delete(String code) {
         companyDAO.delete(code);
+    }
+
+    @Transactional
+    @Override
+    public List<DepartmentCreateDTO> getAllDepartment(String code){
+        List<Department> entities = departmentDAO.getByCompanyCode(code);
+        if (entities == null) return null;
+
+        return departmentMapper.toDtoList(entities);
+
     }
 }

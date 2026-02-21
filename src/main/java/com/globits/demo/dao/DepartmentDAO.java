@@ -13,4 +13,6 @@ public interface DepartmentDAO {
     Department save(Department department);
     void delete(int id);
 
+    public List<Department> getByCompanyCode(String companyCode);
+
 }

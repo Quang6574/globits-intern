@@ -49,9 +49,8 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         UserViewDTO existing = userService.get(id);
-        if (existing == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (existing == null) return ResponseEntity.notFound().build();
+
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }

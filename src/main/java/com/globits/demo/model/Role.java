@@ -1,7 +1,5 @@
 package com.globits.demo.model;
 
-
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;

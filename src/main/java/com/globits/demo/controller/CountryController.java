@@ -9,14 +9,7 @@ import com.globits.demo.dto.CountryCreateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -38,8 +31,10 @@ public class CountryController {
     //READ ALL
     //gọi service trùng tên
     @GetMapping
-    public ResponseEntity<List<CountryCreateDTO>> getAll() {
-        return ResponseEntity.ok(countryService.getAll());
+    public ResponseEntity<List<CountryCreateDTO>> getAll
+            (@RequestParam(defaultValue = "1") int page,
+             @RequestParam(defaultValue = "1", name = "pageSize") int pageSize) {
+        return ResponseEntity.ok(countryService.getAll(page, pageSize));
     }
 
     //READ by id

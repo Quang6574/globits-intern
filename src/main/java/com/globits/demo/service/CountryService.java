@@ -8,7 +8,7 @@ public interface CountryService {
 
     CountryCreateDTO create(CountryCreateDTO country);
 
-    List<CountryCreateDTO> getAll();
+    List<CountryCreateDTO> getAll(int page, int pageSize);
     CountryCreateDTO get(int id);
 
     CountryCreateDTO save(int id, CountryCreateDTO country);

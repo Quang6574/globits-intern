@@ -25,9 +25,16 @@ public class CountryDAOImplement implements CountryDAO {
     }
 
     @Override
-    public List<Country> getAll() {
+    public List<Country> getAll(int page, int pageSize) {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 1;
+
         Session currentSession = entityManager.unwrap(Session.class);
         Query<Country> query = currentSession.createQuery("from Country", Country.class);
+
+        int firstResult = (page - 1) * pageSize;
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageSize);
 
         //List<Country> list = query.getResultList();
         return query.getResultList();

@@ -1,6 +1,7 @@
 package com.globits.demo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -13,24 +14,20 @@ public class Company {
 
     @Id
     private String code;
+    @Column
     private String name;
+    @Column
     private String address;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Person> person;
 
-    @ManyToMany
-    @JoinTable(
-            name = "tbl_company_project",
-            joinColumns = @JoinColumn(name = "company_code", referencedColumnName = "code"),
-            inverseJoinColumns = @JoinColumn(name = "project_code", referencedColumnName = "code")
-    )
-    private Set<Project> projects = new HashSet<>();
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Project> project;
 
     public String getCode() {
         return code;
     }
-
     public void setCode(String code) {
         this.code = code;
     }
@@ -38,7 +35,6 @@ public class Company {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -46,7 +42,6 @@ public class Company {
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -54,8 +49,15 @@ public class Company {
     public List<Person> getPerson() {
         return person;
     }
-
     public void setPerson(List<Person> person) {
         this.person = person;
     }
+
+    public List<Project> getProject() {
+        return project;
+    }
+    public void setProject(List<Project> project) {
+        this.project = project;
+    }
+
 }

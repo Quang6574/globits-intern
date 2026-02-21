@@ -34,9 +34,9 @@ public class CountryServiceImplement implements CountryService {
 
     @Transactional
     @Override
-    public List<CountryCreateDTO> getAll() {
+    public List<CountryCreateDTO> getAll(int page, int pageSize) {
         //tạo list entity từ database qua country repository (countryDAO)
-        List<Country> entities = countryDAO.getAll();
+        List<Country> entities = countryDAO.getAll(page, pageSize);
         //sau đó, chuyển đổi list entity thành list dto và trả về
         return countryMapper.toDtoList(entities);
     }

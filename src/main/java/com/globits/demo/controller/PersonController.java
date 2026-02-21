@@ -101,6 +101,21 @@ public class PersonController {
         return ResponseEntity.ok(updated);
     }
 
+    @PutMapping("/{id}/addAvatar")
+    public ResponseEntity<PersonRoleDTO> addAvatar(@PathVariable int id,
+                                                 @RequestBody PersonRoleDTO dto) {
+        PersonRoleDTO updated = personService.addAvatar(id, dto);
+        if (updated == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updated);
+    }
+    @PutMapping("/{id}/removeAvatar")
+    public ResponseEntity<PersonViewDTO> removeAvatar(@PathVariable int id) {
+        PersonViewDTO updated = personService.removeAvatar(id);
+        if (updated == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updated);
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         PersonViewDTO existing = personService.get(id);
