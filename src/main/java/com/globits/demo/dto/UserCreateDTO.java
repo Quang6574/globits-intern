@@ -7,6 +7,9 @@ public class UserCreateDTO {
     private Boolean isActive;
     private String password;
 
+    public UserCreateDTO() {
+    }
+
     public String getEmail() {
         return email;
     }

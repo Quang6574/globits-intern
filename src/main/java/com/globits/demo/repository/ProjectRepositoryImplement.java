@@ -1,4 +1,4 @@
-package com.globits.demo.dao;
+package com.globits.demo.repository;
 
 import com.globits.demo.model.Project;
 import jakarta.persistence.EntityManager;
@@ -10,7 +10,7 @@ import org.hibernate.query.Query;
 import java.util.List;
 
 @Repository
-public class ProjectDAOImplement implements ProjectDAO {
+public class ProjectRepositoryImplement implements ProjectRepository {
 
     @Autowired
     private EntityManager entityManager
@@ -29,9 +29,18 @@ public class ProjectDAOImplement implements ProjectDAO {
     }
 
     @Override
-    public List<Project> getAll() {
-        Session session = entityManager.unwrap(Session.class);
-        Query<Project> query = session.createQuery("from Project", Project.class);
+    public List<Project> getAll(int page, int pageSize) {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 1;
+
+        Session currentSession = entityManager.unwrap(Session.class);
+        Query<Project> query = currentSession.createQuery("from Project", Project.class);
+
+        int firstResult = (page - 1) * pageSize;
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageSize);
+
+        //List<Project> list = query.getResultList();
         return query.getResultList();
     }
 
@@ -51,4 +60,14 @@ public class ProjectDAOImplement implements ProjectDAO {
             System.out.println("Project with id " + id + " not found.");
         }
     }
+
+    @Override
+    public Project createOrUpdate(Project project) {
+        if (project == null) return null;
+        if (project.getId() == null) return create(project);
+        if (get(project.getId()) == null) return create(project);
+
+        return save(project);
+    }
+
 }

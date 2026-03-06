@@ -32,6 +32,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @JsonProperty("full_name")
     @Column(name = "full_name")
     private String fullName;

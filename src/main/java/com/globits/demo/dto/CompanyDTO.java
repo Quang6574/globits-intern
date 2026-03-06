@@ -1,6 +1,7 @@
 package com.globits.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.globits.demo.model.Company;
 
 import java.util.List;
 
@@ -9,6 +10,16 @@ public class CompanyDTO {
     private String code;
     private String name;
     private String address;
+
+    public CompanyDTO() {}
+
+    public CompanyDTO(Company company) {
+        if (company != null) {
+            this.code = company.getCode();
+            this.name = company.getName();
+            this.address = company.getAddress();
+        }
+    }
 
     @JsonProperty("persons")
     private List<PersonViewDTO> persons;

@@ -18,16 +18,12 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @PostMapping
-    public ResponseEntity<ProjectCreateDTO> create(@RequestBody ProjectCreateDTO projectCreateDTO) {
-        ProjectCreateDTO created = projectService.create(projectCreateDTO);
-        return ResponseEntity.ok(created);
-    }
-
     @GetMapping
-    public ResponseEntity<List<ProjectCreateDTO>> getAll() {
+    public ResponseEntity<List<ProjectCreateDTO>> getAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "1", name = "pageSize") int pageSize) {
         //List<ProjectCreateDTO> projects = projectService.getAll();
-        return ResponseEntity.ok(projectService.getAll());
+        return ResponseEntity.ok(projectService.getAll(page, pageSize));
     }
     @GetMapping("/{id}")
     public ResponseEntity<ProjectCreateDTO> get(@PathVariable int id) {
@@ -35,14 +31,6 @@ public class ProjectController {
         if (project == null) return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(project);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ProjectCreateDTO> update(@PathVariable int id,
-                                                    @RequestBody ProjectCreateDTO projectCreateDTO) {
-        ProjectCreateDTO updated = projectService.save(id, projectCreateDTO);
-        if (updated == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
@@ -73,6 +61,13 @@ public class ProjectController {
         ProjectViewDTO updated = projectService.removePerson(id, dto);
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping
+    public ResponseEntity<ProjectCreateDTO> createOrUpdate(@RequestBody ProjectCreateDTO dto) {
+        ProjectCreateDTO saved = projectService.createOrUpdate(dto);
+        if (saved == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(saved);
     }
 
 }

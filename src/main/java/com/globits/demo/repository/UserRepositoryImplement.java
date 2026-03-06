@@ -1,7 +1,6 @@
-package com.globits.demo.dao;
+package com.globits.demo.repository;
 
 import com.globits.demo.model.User;
-import com.globits.demo.model.Person;
 import org.hibernate.Session;
 import jakarta.persistence.EntityManager;
 import org.hibernate.query.Query;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class UserDAOImplement implements UserDAO {
+public class UserRepositoryImplement implements UserRepository {
 
     @Autowired
     private EntityManager entityManager;
@@ -25,9 +24,16 @@ public class UserDAOImplement implements UserDAO {
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAll(int page, int pageSize) {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 1;
+
         Session currentSession = entityManager.unwrap(Session.class);
         Query<User> query = currentSession.createQuery("from User", User.class);
+
+        int firstResult = (page - 1) * pageSize;
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageSize);
 
         //List<User> list = query.getResultList();
         return query.getResultList();

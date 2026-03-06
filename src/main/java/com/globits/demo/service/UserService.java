@@ -8,7 +8,7 @@ import java.util.List;
 public interface UserService {
     UserViewDTO create(UserCreateDTO user);
 
-    List<UserViewDTO> getAll();
+    List<UserViewDTO> getAll(int page, int pageSize);
     UserViewDTO get(int id);
 
     UserViewDTO save(int id, UserCreateDTO user);

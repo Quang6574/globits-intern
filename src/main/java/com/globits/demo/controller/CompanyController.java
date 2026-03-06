@@ -2,7 +2,7 @@ package com.globits.demo.controller;
 
 import java.util.List;
 
-import com.globits.demo.dto.DepartmentCreateDTO;
+import com.globits.demo.dto.DepartmentDTO;
 import com.globits.demo.service.CompanyService;
 
 import com.globits.demo.dto.CompanyDTO;
@@ -10,14 +10,7 @@ import com.globits.demo.dto.CompanyDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/company")
@@ -26,16 +19,12 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    //CREATE
-    @PostMapping
-    public ResponseEntity<CompanyDTO> create(@RequestBody CompanyDTO companyDTO){
-        return ResponseEntity.ok(companyService.create(companyDTO));
-    }
-
     //READ ALL
     @GetMapping
-    public ResponseEntity<List<CompanyDTO>> getAll() {
-        return ResponseEntity.ok(companyService.getAll());
+    public ResponseEntity<List<CompanyDTO>> getAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "1", name = "pageSize") int pageSize) {
+        return ResponseEntity.ok(companyService.getAll(page, pageSize));
     }
 
     //GET by id
@@ -44,15 +33,6 @@ public class CompanyController {
         CompanyDTO company = companyService.get(code);
         if (company == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(company);
-    }
-
-    //UPDATE
-    @PutMapping("/{code}")
-    public ResponseEntity<CompanyDTO> update(@PathVariable String code,
-                                             @RequestBody CompanyDTO companyDTO) {
-        CompanyDTO updated = companyService.save(code, companyDTO);
-        if (updated == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(updated);
     }
 
     //DELETE
@@ -66,12 +46,19 @@ public class CompanyController {
 
     //GET DEPARTMENTS BY COMPANY CODE
     @GetMapping("/{code}/departments")
-    public ResponseEntity<List<DepartmentCreateDTO>> getAllDepartments(@PathVariable String code) {
+    public ResponseEntity<List<DepartmentDTO>> getAllDepartments(@PathVariable String code) {
         //check if the company with the given code exists
         if (companyService.get(code) == null) return ResponseEntity.notFound().build();
 
-        List<DepartmentCreateDTO> departments = companyService.getAllDepartment(code);
+        List<DepartmentDTO> departments = companyService.getAllDepartment(code);
         return ResponseEntity.ok(departments);
+    }
+
+    @PutMapping
+    public ResponseEntity<CompanyDTO> createOrUpdate(@RequestBody CompanyDTO companyDTO) {
+        CompanyDTO saved = companyService.createOrUpdate(companyDTO);
+        if (saved == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(saved);
     }
 
 }

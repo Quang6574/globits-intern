@@ -1,16 +1,29 @@
 package com.globits.demo.dto;
 
-public class CountryCreateDTO {
+import com.globits.demo.model.Country;
+
+public class CountryDTO {
+    private Integer id;
     private String name;
     private String code;
     private String description;
 
-    public CountryCreateDTO() {}
+    public CountryDTO() {}
 
-    public CountryCreateDTO(String name, String code, String description) {
-        this.name = name;
-        this.code = code;
-        this.description = description;
+    public CountryDTO(Country country) {
+        if (country != null) {
+            this.name = country.getName();
+            this.code = country.getCode();
+            this.description = country.getDescription();
+        }
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

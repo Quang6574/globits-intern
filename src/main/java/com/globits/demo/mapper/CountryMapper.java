@@ -1,6 +1,6 @@
 package com.globits.demo.mapper;
 
-import com.globits.demo.dto.CountryCreateDTO;
+import com.globits.demo.dto.CountryDTO;
 import com.globits.demo.model.Country;
 import org.mapstruct.Mapper;
 
@@ -9,9 +9,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CountryMapper {
 
-    CountryCreateDTO toDto(Country entity);
+    CountryDTO toDto(Country entity);
 
-    Country toEntity(CountryCreateDTO dto);
+    Country toEntity(CountryDTO dto);
 
-    List<CountryCreateDTO> toDtoList(List<Country> entities);
+    List<CountryDTO> toDtoList(List<Country> entities);
 }

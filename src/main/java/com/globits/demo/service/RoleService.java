@@ -8,7 +8,7 @@ import java.util.List;
 public interface RoleService {
     RoleCreateDTO create(RoleCreateDTO roleDTO);
 
-    List<RoleCreateDTO> getAll();
+    List<RoleCreateDTO> getAll(int page, int pageSize);
     RoleViewDTO get(String role);
 
     RoleCreateDTO save(String code, RoleCreateDTO roleDTO);

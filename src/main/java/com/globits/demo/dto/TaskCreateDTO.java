@@ -17,6 +17,8 @@ public class TaskCreateDTO {
     private String name;
     private String description;
 
+    public TaskCreateDTO() {}
+
     public Integer getStatus() {
         return status;
     }

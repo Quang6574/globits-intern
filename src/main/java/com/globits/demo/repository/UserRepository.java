@@ -1,14 +1,14 @@
-package com.globits.demo.dao;
+package com.globits.demo.repository;
 
 import com.globits.demo.model.User;
 
 import java.util.List;
 
-public interface UserDAO {
+public interface UserRepository {
 
     User create(User user);
 
-    List<User> getAll();
+    List<User> getAll(int page, int pageSize);
     User get(int id);
 
     User save(User user);

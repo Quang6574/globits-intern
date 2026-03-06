@@ -1,15 +1,14 @@
-package com.globits.demo.service;
+package com.globits.demo.service.implement;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
-import com.globits.demo.dao.TaskDAO;
+import com.globits.demo.repository.TaskRepository;
 import com.globits.demo.dto.TaskExcelDTO;
 import com.globits.demo.mapper.TaskMapper;
 import com.globits.demo.model.Task;
+
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.stereotype.Service;
@@ -17,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskExport {
 
-    private final TaskDAO taskDAO;
+    private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
 
-    public TaskExport(TaskDAO taskDAO, TaskMapper taskMapper) {
-        this.taskDAO = taskDAO;
+    public TaskExport(TaskRepository taskRepository, TaskMapper taskMapper) {
+        this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
     }
 
@@ -50,33 +49,23 @@ public class TaskExport {
         return ws;
     }
 
-    public void exportToExcel() {
+    public void exportToExcel(OutputStream os) throws IOException {
         //Fetch data
-        List<Task> tasks = taskDAO.findAll();
+        List<Task> tasks = taskRepository.findAll();
         if (tasks.isEmpty()) {
             System.out.println("No tasks found to export.");
             return;
         }
 
         List<TaskExcelDTO> taskExcelDTOs = taskMapper.toExcelDtoList(tasks);
+        //  Create workbook
+        try (Workbook wb = new Workbook(os,
+                "globitsProject", "1.0")) {
 
-        // Build file path
-        String path = "C:\\Users\\" + "Quang\\Downloads\\demo\\excel_globlits";
-        String fileLocation = path + "\\globitsProject.xlsx";
-        try  {
-            // Ensure directory exists
-            Files.createDirectories(Paths.get(path));
-        } catch (IOException e) {
-            System.err.println("Failed to create directory: " + e.getMessage());
-            return;
-        }
-
-        //  Create workbook and delegate header creation to separate method
-        try (OutputStream os = Files.newOutputStream(Paths.get(fileLocation));
-             Workbook wb = new Workbook(os, "globitsProject", "1.0")) {
-
+            //goi function tao worksheet o workbook
             Worksheet ws = createWorksheet(wb); // call separate method
 
+            //bat dau tu row 1
             int row = 1;
             for (TaskExcelDTO dto : taskExcelDTOs) {
                 int col = 0;
@@ -90,10 +79,8 @@ public class TaskExport {
                 row++;
             }
 
-            // wb is closed and written by try\-with\-resources
-
-        } catch (IOException e) {e.printStackTrace();}
-
+        }
     }
+
 
 }

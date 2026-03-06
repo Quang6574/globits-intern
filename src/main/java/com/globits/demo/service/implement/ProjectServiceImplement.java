@@ -1,8 +1,8 @@
-package com.globits.demo.service;
+package com.globits.demo.service.implement;
 
-import com.globits.demo.dao.CompanyDAO;
-import com.globits.demo.dao.PersonDAO;
-import com.globits.demo.dao.ProjectDAO;
+import com.globits.demo.repository.CompanyRepository;
+import com.globits.demo.repository.PersonRepository;
+import com.globits.demo.repository.ProjectRepository;
 import com.globits.demo.dto.ProjectCompanyDTO;
 import com.globits.demo.dto.ProjectCreateDTO;
 import com.globits.demo.dto.ProjectPersonDTO;
@@ -11,6 +11,7 @@ import com.globits.demo.mapper.ProjectMapper;
 import com.globits.demo.model.Company;
 import com.globits.demo.model.Person;
 import com.globits.demo.model.Project;
+import com.globits.demo.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,74 +22,52 @@ import java.util.List;
 public class ProjectServiceImplement implements ProjectService {
 
     @Autowired
-    private ProjectDAO projectDAO;
+    private ProjectRepository projectRepository;
     @Autowired
     private ProjectMapper projectMapper;
     @Autowired
-    private CompanyDAO companyDAO;
+    private CompanyRepository companyRepository;
     @Autowired
-    private PersonDAO personDAO;
-
-    @Transactional
-    @Override
-    public ProjectCreateDTO create(ProjectCreateDTO projectCreateDTO) {
-        Project entity = projectMapper.toEntity(projectCreateDTO);
-        Project saved = projectDAO.create(entity);
-        return projectMapper.toCreateDTO(saved);
-    }
+    private PersonRepository personRepository;
 
     @Transactional(readOnly = true)
     @Override
-    public List<ProjectCreateDTO> getAll() {
-        List<Project> project = projectDAO.getAll();
+    public List<ProjectCreateDTO> getAll(int page, int pageSize) {
+        List<Project> project = projectRepository.getAll(page, pageSize);
         return projectMapper.toCreateDTOList(project);
     }
     @Transactional
     @Override
     public ProjectCreateDTO get(int id) {
-        Project project = projectDAO.get(id);
+        Project project = projectRepository.get(id);
         return projectMapper.toCreateDTO(project);
     }
 
     @Transactional
     @Override
-    public ProjectCreateDTO save(int id, ProjectCreateDTO projectCreateDTO) {
-        Project existing = projectDAO.get(id);
-        if (existing == null) return null;
-
-        existing.setCode(projectCreateDTO.getCode());
-        existing.setName(projectCreateDTO.getName());
-        existing.setDescription(projectCreateDTO.getDescription());
-
-        Project saved = projectDAO.save(existing);
-        return projectMapper.toCreateDTO(saved);
-    }
-
-    @Transactional
-    @Override
     public void delete(int id) {
-        projectDAO.delete(id);
+        projectRepository.delete(id);
     }
 
     @Transactional
     @Override
     public ProjectCreateDTO editCompany(int id, ProjectCompanyDTO dto) {
-        Project entity = projectDAO.get(id);
+        Project entity = projectRepository.get(id);
         //check if project exists
         if (entity == null) return null;
 
         //check if company exists
         //if not, set company field to null
-        Company company = companyDAO.get(dto.getCompanyCode());
+        Company company = companyRepository.get(dto.getCompanyCode());
         if (company == null) {
             entity.setCompany(null);
-            Project saved = projectDAO.save(entity);
+            Project saved = projectRepository.save(entity);
             return projectMapper.toCreateDTO(saved);
         }
 
         //add company
         entity.setCompany(company);
-        Project saved = projectDAO.save(entity);
+        Project saved = projectRepository.save(entity);
         return projectMapper.toCreateDTO(saved);
     }
 
@@ -97,12 +76,12 @@ public class ProjectServiceImplement implements ProjectService {
     public ProjectViewDTO addPerson(int projectId, ProjectPersonDTO personDTO) {
         //get project entity
         //check if project exists
-        Project entityProject = projectDAO.get(projectId);
+        Project entityProject = projectRepository.get(projectId);
         if (entityProject == null) return null;
 
         //get person entity
         //check if person exists
-        Person person = personDAO.get(personDTO.getPersonId());
+        Person person = personRepository.get(personDTO.getPersonId());
         if (person == null) return null;
 
         //get company of project entity and (parameter) person
@@ -124,8 +103,8 @@ public class ProjectServiceImplement implements ProjectService {
         entityProject.getPerson().add(person);
 
         //save the person
-        personDAO.save(person);
-        //Project saved = projectDAO.save(entityProject);
+        personRepository.save(person);
+        //Project saved = projectRepository.save(entityProject);
 
         return projectMapper.toViewDTO(entityProject);
     }
@@ -133,7 +112,7 @@ public class ProjectServiceImplement implements ProjectService {
     @Override
     public ProjectViewDTO removePerson(int projectId, ProjectPersonDTO personDTO) {
         //get project entity
-        Project entityProject = projectDAO.get(projectId);
+        Project entityProject = projectRepository.get(projectId);
 
         //if project not found
         //if personDTO or personId is null
@@ -145,7 +124,7 @@ public class ProjectServiceImplement implements ProjectService {
 
         //get person entity
         //and check if person exists
-        Person person = personDAO.get(personDTO.getPersonId());
+        Person person = personRepository.get(personDTO.getPersonId());
         if (person == null) return null;
 
         boolean existInPerson = person.getProjects().contains(entityProject);
@@ -161,9 +140,32 @@ public class ProjectServiceImplement implements ProjectService {
         if (existInProject) entityProject.getPerson().remove(person);
 
         //save the person
-        personDAO.save(person);
-        //Project saved = projectDAO.save(entityProject);
+        personRepository.save(person);
+        //Project saved = projectRepository.save(entityProject);
         return projectMapper.toViewDTO(entityProject);
+    }
+
+    @Transactional
+    @Override
+    public ProjectCreateDTO createOrUpdate(ProjectCreateDTO projectCreateDTO) {
+        if (projectCreateDTO == null) return null;
+        if (projectCreateDTO.getId() == null) {
+            Project entity = projectMapper.toEntity(projectCreateDTO);
+            Project saved = projectRepository.create(entity);
+            return projectMapper.toCreateDTO(saved);
+        }
+        if (projectCreateDTO.getId() != null) {
+            Project entity = projectRepository.get(projectCreateDTO.getId());
+            if (entity == null) return null;
+
+            entity.setCode(projectCreateDTO.getCode());
+            entity.setName(projectCreateDTO.getName());
+            entity.setDescription(projectCreateDTO.getDescription());
+
+            Project saved = projectRepository.save(entity);
+            return projectMapper.toCreateDTO(saved);
+        }
+        return null;
     }
 
 

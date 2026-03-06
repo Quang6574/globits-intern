@@ -1,9 +1,25 @@
 package com.globits.demo.dto;
 
+import com.globits.demo.model.Project;
+
 public class ProjectCreateDTO {
+    private Integer id;
     private String code;
     private String name;
     private String description;
+
+    public ProjectCreateDTO() {}
+    public ProjectCreateDTO(Project project) {
+        if (project != null) {
+            this.code = project.getCode();
+            this.name = project.getName();
+            this.description = project.getDescription();
+        }
+    }
+
+    public Integer getId() {
+        return id;
+    }
 
     public String getCode() {
         return code;

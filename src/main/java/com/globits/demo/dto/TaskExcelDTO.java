@@ -13,6 +13,9 @@ public class TaskExcelDTO {
     private Integer status;
     private Integer personId;
 
+    public TaskExcelDTO() {
+    }
+
     public String getName() {
         return name;
     }

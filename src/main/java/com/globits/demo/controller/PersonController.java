@@ -2,17 +2,12 @@ package com.globits.demo.controller;
 
 import com.globits.demo.dto.*;
 import com.globits.demo.service.PersonService;
+import com.globits.demo.service.implement.PersonAvatar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,15 +17,20 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
+    @Autowired
+    private PersonAvatar personAvatar;
+
     @PostMapping
-    public ResponseEntity<PersonViewDTO> create(@RequestBody PersonCreateDTO createDTO) {
+    public ResponseEntity<PersonViewDTO> create(@RequestBody PersonDTO createDTO) {
         PersonViewDTO person = personService.create(createDTO);
         return ResponseEntity.ok(person);
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonViewDTO>> getAll() {
-        return ResponseEntity.ok(personService.getAll());
+    public ResponseEntity<List<PersonViewDTO>> getAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "1", name = "pageSize") int pageSize) {
+        return ResponseEntity.ok(personService.getAll(page, pageSize));
     }
     @GetMapping("/{id}")
     public ResponseEntity<PersonViewDTO> get(@PathVariable int id) {
@@ -44,7 +44,7 @@ public class PersonController {
     //update user info
     @PutMapping("/{id}")
     public ResponseEntity<PersonViewDTO> update(@PathVariable int id,
-                                                @RequestBody PersonCreateDTO createDTO) {
+                                                @RequestBody PersonDTO createDTO) {
 
         PersonViewDTO updated = personService.save(id, createDTO);
         if (updated == null) return ResponseEntity.notFound().build();
@@ -64,7 +64,7 @@ public class PersonController {
     //remove user from person
     @PutMapping("/{id}/removeUser")
     public ResponseEntity<PersonViewDTO> removeUser(@PathVariable int id,
-                                                 @RequestBody PersonCreateDTO dto) {
+                                                 @RequestBody PersonDTO dto) {
 
         PersonViewDTO updated = personService.removeUser(id, dto);
         if (updated == null) return ResponseEntity.notFound().build();
@@ -101,28 +101,27 @@ public class PersonController {
         return ResponseEntity.ok(updated);
     }
 
-    @PutMapping("/{id}/addAvatar")
-    public ResponseEntity<PersonRoleDTO> addAvatar(@PathVariable int id,
-                                                 @RequestBody PersonRoleDTO dto) {
-        PersonRoleDTO updated = personService.addAvatar(id, dto);
+    @PutMapping("/{id}/avatar")
+    public ResponseEntity<PersonViewDTO> personAvatar(@PathVariable("id") int personId,
+                                                   @RequestParam("file") MultipartFile img) {
+        PersonViewDTO updated = personAvatar.saveAvatar(personId, img);
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);
     }
-    @PutMapping("/{id}/removeAvatar")
-    public ResponseEntity<PersonViewDTO> removeAvatar(@PathVariable int id) {
-        PersonViewDTO updated = personService.removeAvatar(id);
-        if (updated == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(updated);
-    }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         PersonViewDTO existing = personService.get(id);
-        if (existing == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (existing == null) return ResponseEntity.notFound().build();
+
         personService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<PersonDTO> createOrUpdate(@RequestBody PersonDTO personDTO) {
+        PersonDTO saved = personService.createOrUpdate(personDTO);
+        if (saved == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(saved);
     }
 }

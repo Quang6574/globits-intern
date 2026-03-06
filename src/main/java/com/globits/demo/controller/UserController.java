@@ -23,8 +23,10 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserViewDTO>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<List<UserViewDTO>> getAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "1", name = "pageSize") int pageSize) {
+        return ResponseEntity.ok(userService.getAll(page, pageSize));
     }
 
     @GetMapping("/{id}")

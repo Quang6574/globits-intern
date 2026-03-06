@@ -1,10 +1,10 @@
-package com.globits.demo.dao;
+package com.globits.demo.repository;
 
 import com.globits.demo.model.Country;
 
 import java.util.List;
 
-public interface CountryDAO {
+public interface CountryRepository {
 
     Country create(Country country);
 
@@ -13,5 +13,7 @@ public interface CountryDAO {
 
     Country save(Country country);
     void delete(int id);
+
+    Country  createOrUpdate(Country country);
 
 }

@@ -1,5 +1,4 @@
-package com.globits.demo.dao;
-
+package com.globits.demo.repository;
 
 import com.globits.demo.model.Department;
 import org.hibernate.Session;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class DepartmentDAOImplement implements  DepartmentDAO {
+public class DepartmentRepositoryImplement implements DepartmentRepository {
 
     @Autowired
     private EntityManager entityManager;
@@ -25,10 +24,18 @@ public class DepartmentDAOImplement implements  DepartmentDAO {
     }
 
     @Override
-    public List<Department> getAll() {
+    public List<Department> getAll(int page, int pageSize) {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 1;
+
         Session currentSession = entityManager.unwrap(Session.class);
         Query<Department> query = currentSession.createQuery("from Department", Department.class);
-        //List<Department> list = query.getResultList();
+
+        int firstResult = (page - 1) * pageSize;
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageSize);
+
+        //List<Person> list = query.getResultList();
         return query.getResultList();
     }
 
@@ -61,5 +68,13 @@ public class DepartmentDAOImplement implements  DepartmentDAO {
         Query<Department> query = currentSession.createQuery("from Department d where d.company.code = :code", Department.class);
         query.setParameter("code", companyCode);
         return query.getResultList();
+    }
+
+    public Department createOrUpdate(Department department) {
+        if (department == null) return null;
+        if (department.getId() == null) return create(department);
+        if (get(department.getId()) == null) return null;
+
+        return save(department);
     }
 }

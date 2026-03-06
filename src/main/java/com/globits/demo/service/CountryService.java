@@ -1,17 +1,19 @@
 package com.globits.demo.service;
 
-import com.globits.demo.dto.CountryCreateDTO;
+import com.globits.demo.dto.CountryDTO;
 
 import java.util.List;
 
 public interface CountryService {
 
-    CountryCreateDTO create(CountryCreateDTO country);
+    CountryDTO create(CountryDTO country);
 
-    List<CountryCreateDTO> getAll(int page, int pageSize);
-    CountryCreateDTO get(int id);
+    List<CountryDTO> getAll(int page, int pageSize);
+    CountryDTO get(int id);
 
-    CountryCreateDTO save(int id, CountryCreateDTO country);
+    CountryDTO save(int id, CountryDTO country);
     void delete(int id);
+
+    CountryDTO createOrUpdate(CountryDTO countryDTO);
 
 }

@@ -4,6 +4,8 @@ public class RoleCreateDTO {
     private String role;
     private String description;
 
+    public RoleCreateDTO() {}
+
     public String getRole() {
         return role;
     }

@@ -3,10 +3,13 @@ package com.globits.demo.controller;
 import com.globits.demo.dto.TaskCreateDTO;
 
 import com.globits.demo.dto.TaskEditFkDTO;
-import com.globits.demo.service.TaskExport;
+import com.globits.demo.service.implement.TaskExport;
 import com.globits.demo.service.TaskService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.data.domain.Page;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -90,7 +93,9 @@ public class TaskController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<TaskCreateDTO>> search(
+    public ResponseEntity<Page<TaskCreateDTO>> search(
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam(name = "projectId", required = false) Integer projectId,
             @RequestParam(name = "personId", required = false) Integer personId,
             @RequestParam(name = "companyCode", required = false) String companyCode,
@@ -98,14 +103,22 @@ public class TaskController {
             @RequestParam(name = "priority", required = false) Integer priority,
             @RequestParam(name = "name", required = false) String name) {
 
-        List<TaskCreateDTO> result =
-                taskService.search(projectId, personId, companyCode, status, priority, name);
+        Page<TaskCreateDTO> result =
+                taskService.search(page - 1, pageSize, projectId, personId, companyCode, status, priority, name);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/export")
-    public ResponseEntity<Void> export() {
-        taskExport.exportToExcel();
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> export(HttpServletResponse response) throws IOException {
+        response.setContentType(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"globitsProject.xlsx\"");
+
+        // write directly to response output stream
+        taskExport.exportToExcel(response.getOutputStream());
+        response.flushBuffer();
+        return ResponseEntity.ok().build();
     }
+
 }

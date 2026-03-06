@@ -6,6 +6,9 @@ public class ProjectViewDTO {
     private String name;
     private String code;
 
+    public ProjectViewDTO() {
+    }
+
     private List<PersonViewDTO> persons;
 
     public List<PersonViewDTO> getPersons() {

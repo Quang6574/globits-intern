@@ -4,6 +4,9 @@ public class ProjectPersonDTO {
 
     private Integer personId;
 
+    public ProjectPersonDTO() {
+    }
+
     public Integer getPersonId() {
         return personId;
     }

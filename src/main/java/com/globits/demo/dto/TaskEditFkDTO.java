@@ -3,6 +3,9 @@ package com.globits.demo.dto;
 public class TaskEditFkDTO {
     private Integer id;
 
+    public TaskEditFkDTO() {
+    }
+
     public Integer getId() {
         return id;
     }

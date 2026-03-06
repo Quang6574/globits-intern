@@ -1,6 +1,6 @@
 package com.globits.demo.mapper;
 
-import com.globits.demo.dto.PersonCreateDTO;
+import com.globits.demo.dto.PersonDTO;
 import com.globits.demo.dto.PersonViewDTO;
 import com.globits.demo.model.Person;
 import org.mapstruct.Mapper;
@@ -18,5 +18,8 @@ public interface PersonMapper {
 
 
     @Mapping(target = "id", ignore = true)
-    Person toCreateDTO(PersonCreateDTO dto);
+    Person toCreateDTO(PersonDTO dto);
+
+    PersonDTO toEntityDTO(Person person);
+
 }

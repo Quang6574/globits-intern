@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface ProjectService {
 
-    ProjectCreateDTO create(ProjectCreateDTO projectCreateDTO);
-    List<ProjectCreateDTO> getAll();
+    List<ProjectCreateDTO> getAll(int page, int pageSize);
     ProjectCreateDTO get(int id);
-    ProjectCreateDTO save(int id, ProjectCreateDTO projectCreateDTO);
     void delete(int id);
 
     ProjectCreateDTO editCompany(int id, ProjectCompanyDTO dto);
     ProjectViewDTO addPerson(int projectId, ProjectPersonDTO personDTO);
     ProjectViewDTO removePerson(int projectId, ProjectPersonDTO personDTO);
+
+    ProjectCreateDTO createOrUpdate(ProjectCreateDTO projectCreateDTO);
 }

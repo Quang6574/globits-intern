@@ -8,6 +8,9 @@ public class UserViewDTO {
     private String fullName;
     private String phoneNum;
 
+    public UserViewDTO() {
+    }
+
     public String getEmail() {
         return email;
     }

@@ -6,6 +6,9 @@ public class RoleViewDTO {
     private String role;
     private String description;
 
+    public RoleViewDTO() {}
+
+
     private List<PersonViewDTO> persons;
 
     public String getRole() {

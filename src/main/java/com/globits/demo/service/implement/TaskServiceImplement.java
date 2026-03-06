@@ -1,40 +1,48 @@
-package com.globits.demo.service;
+package com.globits.demo.service.implement;
 
-import com.globits.demo.dao.PersonDAO;
-import com.globits.demo.dao.ProjectDAO;
+import com.globits.demo.repository.PersonRepository;
+import com.globits.demo.repository.ProjectRepository;
 import com.globits.demo.model.Person;
 import com.globits.demo.model.Project;
 
 import com.globits.demo.mapper.TaskMapper;
 import com.globits.demo.model.Task;
-import com.globits.demo.dao.TaskDAO;
+import com.globits.demo.repository.TaskRepository;
 import com.globits.demo.dto.TaskCreateDTO;
 import com.globits.demo.dto.TaskEditFkDTO;
 
 import java.util.List;
 import java.util.ArrayList;
+
+import com.globits.demo.service.TaskService;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+
 @Service
 @Transactional
 public class TaskServiceImplement implements TaskService {
 
-    private final TaskDAO taskDAO;
+    private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
 
     @Autowired
-    private PersonDAO personDAO;
+    private PersonRepository personRepository;
     @Autowired
-    private ProjectDAO projectDAO;
+    private ProjectRepository projectRepository;
 
-    public TaskServiceImplement(TaskDAO taskDAO, TaskMapper taskMapper) {
-        this.taskDAO = taskDAO;
+    public TaskServiceImplement(TaskRepository taskRepository, TaskMapper taskMapper) {
+        this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
     }
 
@@ -42,27 +50,27 @@ public class TaskServiceImplement implements TaskService {
     public TaskCreateDTO create(TaskCreateDTO dto) {
         Task entity = taskMapper.toEntity(dto);
 
-        Task saved = taskDAO.save(entity);
+        Task saved = taskRepository.save(entity);
         return taskMapper.toDto(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TaskCreateDTO> getAll() {
-        List<Task> entities = taskDAO.findAll();
+        List<Task> entities = taskRepository.findAll();
         return taskMapper.toDtoList(entities);
     }
     @Override
     @Transactional(readOnly = true)
     public TaskCreateDTO get(Integer id) {
-        return taskDAO.findById(id)
+        return taskRepository.findById(id)
                 .map(taskMapper::toDto)
                 .orElse(null);
     }
 
     @Override
     public TaskCreateDTO save(Integer id, TaskCreateDTO dto) {
-        Task entity = taskDAO.findById(id).orElse(null);
+        Task entity = taskRepository.findById(id).orElse(null);
         if (entity == null) return null;
 
         entity.setName(dto.getName());
@@ -72,57 +80,58 @@ public class TaskServiceImplement implements TaskService {
         entity.setEndDate(dto.getEndDate());
         entity.setStartDate(dto.getStartDate());
 
-        Task saved = taskDAO.save(entity);
+        Task saved = taskRepository.save(entity);
         return taskMapper.toDto(saved);
     }
 
     @Override
-    public void delete(Integer id) {if (taskDAO.existsById(id)) taskDAO.deleteById(id);}
+    public void delete(Integer id) {if (taskRepository.existsById(id)) taskRepository.deleteById(id);}
 
     @Override
     @Transactional
     public TaskCreateDTO editPerson(Integer taskId, TaskEditFkDTO personDTO) {
-        Task task = taskDAO.findById(taskId).orElse(null);
+        Task task = taskRepository.findById(taskId).orElse(null);
         if (task == null) return null;
 
         Integer personId = personDTO.getId();
         if (personId == null) {
             task.setPerson(null);
-            Task saved = taskDAO.save(task);
+            Task saved = taskRepository.save(task);
             return taskMapper.toDto(saved);
         }
 
-        Person person = personDAO.get(personId);
+        Person person = personRepository.get(personId);
         if (person == null) return null;
 
         task.setPerson(person);
-        Task saved = taskDAO.save(task);
+        Task saved = taskRepository.save(task);
         return taskMapper.toDto(saved);
     }
     @Override
     @Transactional
     public TaskCreateDTO editProject(Integer taskId, TaskEditFkDTO projectDTO) {
-        Task task = taskDAO.findById(taskId).orElse(null);
+        Task task = taskRepository.findById(taskId).orElse(null);
         if (task == null) return null;
 
         Integer projectId = projectDTO.getId();
         if (projectId == null) {
             task.setProject(null);
-            Task saved = taskDAO.save(task);
+            Task saved = taskRepository.save(task);
             return taskMapper.toDto(saved);
         }
 
-        Project project = projectDAO.get(projectId);
+        Project project = projectRepository.get(projectId);
         if (project == null) return null;
 
         task.setProject(project);
-        Task saved = taskDAO.save(task);
+        Task saved = taskRepository.save(task);
         return taskMapper.toDto(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TaskCreateDTO> search(Integer projectId,
+    public Page<TaskCreateDTO> search(Integer page, Integer pageSize,
+                                      Integer projectId,
                                       Integer personId,
                                       String companyCode,
                                       Integer status,
@@ -171,8 +180,15 @@ public class TaskServiceImplement implements TaskService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        List<Task> entities = taskDAO.findAll(spec);
-        return taskMapper.toDtoList(entities);
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<Task> entities = taskRepository.findAll(spec, pageable);
+        List <TaskCreateDTO> dtos = taskMapper.toDtoList(entities.getContent());
+        return new PageImpl<>(
+                dtos,
+                pageable,
+                entities.getTotalElements()
+        );
     }
 
 }
